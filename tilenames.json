@@ -1,4 +1,5 @@
-{"Cudgel":1, 
+{
+  "Cudgel":1, 
   "3 Venator Shard": 2, 
   "Zammy Drop": 3, 
   "TOA Purp": 4, 
@@ -39,4 +40,5 @@
   "Corp Unique": 45, 
   "4 seed/1 enh": 46, 
   "Any Pet": 47, 
-  "End" : 50}
+  "End" : 50
+}
