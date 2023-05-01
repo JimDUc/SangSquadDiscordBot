@@ -204,6 +204,7 @@ async def reset(ctx, team=None):
 #Command to roll the dice
 @client.command()
 async def roll(ctx, team: str):
+  
   #Open JSON files
   with open("tiles.json", "r") as f:
     tiles = json.load(f)
@@ -211,64 +212,69 @@ async def roll(ctx, team: str):
     rolls = json.load(f)
   with open("tilenames.json", "r") as f:
     tilesnames = json.load(f)
-  with open("points.json", "r") as f:
-      points = json.load(f)
+  with open("checkpoints.json", "r") as f:
+      cp = json.load(f)
 
   #Check if teams roll has been unlocked by admin if true
   if rolls[f"{team}"] is True:
-    dice = random.randint(1, 3)
-    description = f"{team} rolled a {dice}"
-    tiles[f"{team}"] += dice
-    if tiles[f"{team}"] == 8 or tiles[f"{team}"] == 24 or tiles[f"{team}"] == 40 or tiles[f"{team}"] == 48:
-      tiles[f"{team}"] += 2
-    if tiles[f"{team}"] == 9 or tiles[f"{team}"] == 25 or tiles[f"{team}"] == 41 or tiles[f"{team}"] == 49:
-      tiles[f"{team}"] += 1
-    if tiles[f"{team}"] > 49:
-      tiles[f"{team}"] = 50
-    description += f"\n\n\n{team} has landed on "
-    for name, spot in tilesnames.items():
-      if tiles[f"{team}"] == spot:
-        description += f"{name}."
-    rolls[f"{team}"] = False
-    if tiles[f"{team}"] == 10:
-      if points[f"{team}"] >= 4 and points[f"{team}"] <= 8:
-        description += f"\n{team} has 3 Kraken Tents."
-      elif points[f"{team}"] >= 9 and points[f"{team}"] <= 13:
-        description += f"\n{team} has Dragon Limbs."
-      elif points[f"{team}"] >= 14 and points[f"{team}"] <= 23:
-        description += f"\n{team} has Any Obby Armour Piece."
-    elif tiles[f"{team}"] == 26:
-      if points[f"{team}"] >= 9 and points[f"{team}"] <= 17:
-        description += f"\n{team} has Monkey Tail."
-      elif points[f"{team}"] >= 18 and points[f"{team}"] <= 28:
-        description += f"\n{team} has Dragon Chainbody."
-      elif points[f"{team}"] >= 29 and points[f"{team}"] <= 46:
-        description += f"\n{team} has Chaos Robe Bottom."
-    if tiles[f"{team}"] == 42:
-      if points[f"{team}"] >= 11 and points[f"{team}"] <= 18:
-        description += f"\n{team} has DK Finish Log(aside from pet)."
-      elif points[f"{team}"] >= 19 and points[f"{team}"] <= 31:
-        description += f"\n{team} has Eleven Signet."
-      elif points[f"{team}"] >= 32 and points[f"{team}"] <= 50:
-        description += f"\n{team} has Gnome Scarf."
+      dice = random.randint(1, 3)
+      description = f"{team} rolled a {dice}"
+      tiles[f"{team}"] += dice
+      if tiles[f"{team}"] == 8 or tiles[f"{team}"] == 24 or tiles[f"{team}"] == 40 or tiles[f"{team}"] == 48:
+        tiles[f"{team}"] += 2
+      if tiles[f"{team}"] == 9 or tiles[f"{team}"] == 25 or tiles[f"{team}"] == 41 or tiles[f"{team}"] == 49:
+        tiles[f"{team}"] += 1
+      if tiles[f"{team}"] > 49:
+        tiles[f"{team}"] = 50
+      description += f"\n\n\n{team} has landed on "
+      for name, spot in tilesnames.items():
+        if tiles[f"{team}"] == spot:
+          description += f"{name}."
+          rolls[f"{team}"] = False
+      #Checkpoint 1
+      if tiles[f"{team}"] == 10:
+        if cp[f"{team}"] >= 4 and cp[f"{team}"] <= 8:
+          description += f"\n{team} has 3 Kraken Tents."
+        elif cp[f"{team}"] >= 9 and cp[f"{team}"] <= 13:
+          description += f"\n{team} has Dragon Limbs."
+        elif cp[f"{team}"] >= 14 and cp[f"{team}"] <= 23:
+          description += f"\n{team} has Any Obby Armour Piece."
         
-    with open("tiles.json", "w") as f:
-        json.dump(tiles, f)
-    with open("roll.json", "w") as f:
-        json.dump(rolls, f)
-    embed = discord.Embed(title="SangSquad Dice Roll", description=description)
-    if dice == 1:
-      embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1101579115833872394/1101580033534984263/dice1_transparent.png")
-    elif dice == 2:
-      embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1101579115833872394/1101582115457470514/dice2_transparent.png")
-    elif dice == 3:
-      embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1101579115833872394/1102072563116548176/dice3_transparent.png")
-    await ctx.send(embed=embed)
+      #Checkpoint 2
+      elif tiles[f"{team}"] == 26:
+            if cp[f"{team}"] >= 9 and cp[f"{team}"] <= 17:
+                description += f"\n{team} has Monkey Tail."
+            elif cp[f"{team}"] >= 18 and cp[f"{team}"] <= 28:
+                description += f"\n{team} has Dragon Chainbody."
+            elif cp[f"{team}"] >= 29 and cp[f"{team}"] <= 46:
+              description += f"\n{team} has Elder Chaos Robe Bottom."
+
+      #Checkpoint 3
+      if tiles[f"{team}"] == 42:
+            if cp[f"{team}"] >= 11 and cp[f"{team}"] <= 18:
+              description += f"\n{team} has DK Finish Log(aside from pet)."
+            elif cp[f"{team}"] >= 19 and cp[f"{team}"] <= 31:
+              description += f"\n{team} has Eleven Signet."
+            elif cp[f"{team}"] >= 32:
+              description += f"\n{team} has Gnome Scarf."
+      
+      with open("tiles.json", "w") as f:
+            json.dump(tiles, f)
+      with open("roll.json", "w") as f:
+            json.dump(rolls, f)
+      embed = discord.Embed(title="SangSquad Dice Roll", description=description)
+      if dice == 1:
+          embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1101579115833872394/1101580033534984263/dice1_transparent.png")
+      elif dice == 2:
+          embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1101579115833872394/1101582115457470514/dice2_transparent.png")
+      elif dice == 3:
+          embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1101579115833872394/1102072563116548176/dice3_transparent.png")
+      await ctx.send(embed=embed)
 
   else:
-      description = f"{team} has to wait until an Administrator confirms your submission."
-      embed = discord.Embed(title="SangSquad Dice Roll", description=description)
-      await ctx.send(embed=embed)
+    description = f"{team} has to wait until an Administrator confirms your submission."
+    embed = discord.Embed(title="SangSquad Dice Roll", description=description)
+    await ctx.send(embed=embed)
 
 
 #Command for admin to verify submission
@@ -288,16 +294,24 @@ async def verify(ctx, team: str):
         tilepoints = json.load(f)
     with open("tiles.json", "r") as f:
         tiles = json.load(f)
+    with open("checkpoints.json", "r") as f:
+        cp = json.load(f)
     description = f"{team} has"
     current_tile = tiles[f"{team}"]
     for name, spot in tilenames.items():
         if current_tile == spot:
             if name in tilepoints:
                 points[f"{team}"] += tilepoints[f"{name}"]
+                cp[f"{team}"] += tilepoints[f"{name}"]
+                if tiles[f"{team}"] == 10 or tiles[f"{team}"] == 26 or tiles[f"{team}"] == 42 or tiles[f"{team}"] >= 50:
+                  cp [f"{team}"] = 0
                 description += f" {tilepoints[f'{name}']} points added to their score."
             break
+
     with open("points.json", "w") as f:
         json.dump(points, f)
+    with open("checkpoints.json", "w") as f:
+        json.dump(cp, f)
     embed = discord.Embed(title="SangSquad Dice Roll", description=description)
     await ctx.send(embed=embed)
 
@@ -309,32 +323,32 @@ async def tile(ctx, team: str):
       tiles = json.load(f)
     with open("tilenames.json", "r") as f:
       tilesnames = json.load(f)
-    with open("points.json", "r") as f:
-      points = json.load(f)
+    with open("checkpoints.json", "r") as f:
+      cp = json.load(f)
     description = f"{team} is on "
     for name, spot in tilesnames.items():
         if tiles[f"{team}"] == spot:
             description += f"{name}."
     if tiles[f"{team}"] == 10:
-      if points[f"{team}"] >= 4 and points[f"{team}"] <= 8:
+      if cp[f"{team}"] >= 4 and cp[f"{team}"] <= 8:
         description += f"\n{team} has 3 Kraken Tents."
-      elif points[f"{team}"] >= 9 and points[f"{team}"] <= 13:
+      elif cp[f"{team}"] >= 9 and cp[f"{team}"] <= 13:
         description += f"\n{team} has Dragon Limbs."
-      elif points[f"{team}"] >= 14 and points[f"{team}"] <= 23:
+      elif cp[f"{team}"] >= 14 and cp[f"{team}"] <= 23:
         description += f"\n{team} has Any Obby Armour Piece."
     elif tiles[f"{team}"] == 26:
-      if points[f"{team}"] >= 9 and points[f"{team}"] <= 17:
+      if cp[f"{team}"] >= 9 and cp[f"{team}"] <= 17:
         description += f"\n{team} has Monkey Tail."
-      elif points[f"{team}"] >= 18 and points[f"{team}"] <= 28:
+      elif cp[f"{team}"] >= 18 and cp[f"{team}"] <= 28:
         description += f"\n{team} has Dragon Chainbody."
-      elif points[f"{team}"] >= 29 and points[f"{team}"] <= 46:
-        description += f"\n{team} has Chaos Robe Bottom."
+      elif cp[f"{team}"] >= 29 and cp[f"{team}"] <= 46:
+        description += f"\n{team} has Elder Chaos Robe Bottom."
     if tiles[f"{team}"] == 42:
-      if points[f"{team}"] >= 11 and points[f"{team}"] <= 18:
+      if cp[f"{team}"] >= 11 and cp[f"{team}"] <= 18:
         description += f"\n{team} has DK Finish Log(aside from pet)."
-      elif points[f"{team}"] >= 19 and points[f"{team}"] <= 31:
+      elif cp[f"{team}"] >= 19 and cp[f"{team}"] <= 31:
         description += f"\n{team} has Eleven Signet."
-      elif points[f"{team}"] >= 32 and points[f"{team}"] <= 50:
+      elif cp[f"{team}"] >= 32:
         description += f"\n{team} has Gnome Scarf."
     embed = discord.Embed(title="SangSquad Dice Roll", description=description)
     await ctx.send(embed=embed)
@@ -353,6 +367,18 @@ async def reroll(ctx, team: str):
     embed = discord.Embed(title="SangSquad Dice Roll", description=description)
     await ctx.send(embed=embed)
 
+@client.command()
+async def rules(ctx):
+  embed = discord.Embed(title="SangSquad Dice Roll")
+  embed.set_image(url="https://cdn.discordapp.com/attachments/1098466434838974474/1102340661014966292/sang_squad_spring_snake_event_2023_11.png")
+  await ctx.send(embed=embed)
+
+
+@client.command()
+async def map(ctx):
+  embed = discord.Embed(title="SangSquad Dice Roll")
+  embed.set_image(url="https://cdn.discordapp.com/attachments/1098466434838974474/1101669071533125723/Spring_Snake_Event.png")
+  await ctx.send(embed=embed)
 
 keep_alive()
 
